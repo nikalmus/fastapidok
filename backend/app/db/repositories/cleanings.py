@@ -1,13 +1,12 @@
 from app.db.repositories.base import BaseRepository
 from app.models.cleaning import CleaningCreate, CleaningUpdate, CleaningInDB
  
- 
+
 CREATE_CLEANING_QUERY = """
-    INSERT INTO cleanings (name, description, price, cleaning_type)
-    VALUES (:name, :description, :price, :cleaning_type)
+    INSERT INTO cleanings (name, description, price, cleaning_type, cleaner_id)
+    VALUES (:name, :description, :price, :cleaning_type, :cleaner_id)
     RETURNING id, name, description, price, cleaning_type;
 """
- 
  
 class CleaningsRepository(BaseRepository):
     """"

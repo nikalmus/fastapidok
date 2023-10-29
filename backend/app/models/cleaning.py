@@ -18,11 +18,13 @@ class CleaningBase(CoreModel):
     description: Optional[str]
     price: Optional[float]
     cleaning_type: Optional[CleaningType] = "spot_clean"
+    cleaner_id: int
  
  
 class CleaningCreate(CleaningBase):
     name: str
     price: float
+    cleaner_id: int
  
  
 class CleaningUpdate(CleaningBase):
@@ -33,6 +35,7 @@ class CleaningInDB(IDModelMixin, CleaningBase):
     name: str
     price: float
     cleaning_type: CleaningType
+    cleaner_id: int
  
  
 class CleaningPublic(IDModelMixin, CleaningBase):
