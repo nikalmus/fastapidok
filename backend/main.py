@@ -12,6 +12,7 @@ class Item(BaseModel):
     name: str
     price: float
     count: int
+    id: int
     category: Category
 
 items = {
@@ -64,3 +65,42 @@ def get_item_by_params(
         },
         "selection": selection
         }
+
+@app.post("/")
+def add_item(item: Item) -> dict[str, Item]:
+
+    if item.id in items:
+        HTTPException(status_code=400, detail=f"Item with {item.id=} already exists.")
+
+    items[item.id] = item
+    return {"added": item}
+
+@app.put("/update/{item_id}")
+def update_item(
+    item_id: int,
+    name: str | None = None,
+    price: float | None = None,
+    count: int | None = None,
+    category: Category | None = None,
+) -> dict[str, Item]:
+    if item_id not in items:
+        raise HTTPException(status_code=404, detail=f"Item {item_id} not found")
+    item = items[item_id]
+    if name is not None:
+        item.name = name
+    if price is not None:
+        item.price = price
+    if count is not None:
+        item.count = count
+    if category is not None:
+        item.category = category
+    return {"updated": item}
+
+@app.delete("/delete/{item_id}")
+def delete_item(item_id: int) -> dict[str, Item]:
+    if item_id not in items:
+        raise HTTPException(status_code=404, detail=f"Item {item_id} not found")
+    
+    item = items[item_id]
+    del items[item_id]
+    return {"deleted": item}
