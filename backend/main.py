@@ -1,5 +1,5 @@
 from enum import Enum
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, Request, HTTPException
 from pydantic import BaseModel
 
 app = FastAPI()
@@ -14,6 +14,12 @@ class Item(BaseModel):
     count: int
     id: int
     category: Category
+
+class UpdateItem(BaseModel):
+    name: str | None = None
+    price: float | None = None
+    count: int | None = None
+    category: Category | None = None
 
 items = {
     0: Item(name="Hammer", price=9.99, count=20, id=0, category=Category.TOOLS),
@@ -75,25 +81,71 @@ def add_item(item: Item) -> dict[str, Item]:
     items[item.id] = item
     return {"added": item}
 
+# @app.put("/update/{item_id}")
+# def update_item(
+#     item_id: int,
+#     name: str | None = None,
+#     price: float | None = None,
+#     count: int | None = None,
+#     category: Category | None = None,
+# ) -> dict[str, Item]:
+#     if item_id not in items:
+#         raise HTTPException(status_code=404, detail=f"Item {item_id} not found")
+#     item = items[item_id]
+#     if name is not None:
+#         item.name = name
+#     if price is not None:
+#         item.price = price
+#     if count is not None:
+#         item.count = count
+#     if category is not None:
+#         item.category = category
+#     return {"updated": item}
+
+# @app.put("/update/{item_id}")
+# def update_item(
+#     item_id: int,
+#     request: Request,  #<-- get the request body
+#     name: str | None = None, 
+#     price: float | None = None,
+#     count: int | None = None,
+#     category: Category | None = None
+# ) -> dict[str, Item]:
+#     if item_id not in items:
+#         raise HTTPException(status_code=404, detail=f"Item {item_id} not found")
+#     item = items[item_id]
+#     print("UPDATE")
+
+#     # Check query params for updates  
+#     try:
+#         if name is not None:
+#             item.name = name
+#         if price is not None:
+#             item.price = price
+#         if count is not None:
+#             item.count = count
+#         if category is not None:
+#             item.category = category
+
+#         return {"updated": item}
+#     except Exception as e:
+#         print("Error updating item:", e)
+#         raise e
+
 @app.put("/update/{item_id}")
 def update_item(
     item_id: int,
-    name: str | None = None,
-    price: float | None = None,
-    count: int | None = None,
-    category: Category | None = None,
+    update_data: UpdateItem  # Use the Pydantic model as the request body
 ) -> dict[str, Item]:
     if item_id not in items:
         raise HTTPException(status_code=404, detail=f"Item {item_id} not found")
     item = items[item_id]
-    if name is not None:
-        item.name = name
-    if price is not None:
-        item.price = price
-    if count is not None:
-        item.count = count
-    if category is not None:
-        item.category = category
+
+    # Update the item with data from the request body
+    for field, value in update_data.dict().items():
+        if value is not None:
+            setattr(item, field, value)
+
     return {"updated": item}
 
 @app.delete("/delete/{item_id}")
