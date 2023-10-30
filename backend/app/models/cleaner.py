@@ -15,7 +15,7 @@ class CleanerCreate(CleanerBase):
 
 
 class CleanerUpdate(CleanerBase):
-    pass
+    name: str
 
 
 class CleanerInDB(IDModelMixin, CleanerBase):
