@@ -5,6 +5,7 @@ from fastapi import HTTPException
 from starlette.status import HTTP_400_BAD_REQUEST
 
 
+
 CREATE_CLEANING_QUERY = """
     INSERT INTO cleanings (name, description, price, cleaning_type, cleaner_id)
     VALUES (:name, :description, :price, :cleaning_type, :cleaner_id)

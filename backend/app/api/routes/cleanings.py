@@ -7,7 +7,6 @@ from app.models.cleaning import CleaningCreate, CleaningUpdate, CleaningPublic
 from app.db.repositories.cleanings import CleaningsRepository  
 from app.api.dependencies.database import get_repository  
  
- 
 router = APIRouter()
  
  
